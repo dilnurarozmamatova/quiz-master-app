@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz Master App</title>
+
+<style>
+body {
+  font-family: Arial;
+  background: linear-gradient(135deg, #4facfe, #00f2fe);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.container {
+  background: white;
+  padding: 20px;
+  border-radius: 15px;
+  width: 400px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+  text-align: center;
+}
+
+h2 {
+  margin-bottom: 10px;
+}
+
+#question {
+  font-size: 18px;
+  margin: 20px 0;
+}
+
+.btn {
+  display: block;
+  width: 100%;
+  margin: 8px 0;
+  padding: 10px;
+  border: none;
+  border-radius: 8px;
+  background: #4facfe;
+  color: white;
+  cursor: pointer;
+}
+
+.btn:hover {
+  opacity: 0.9;
+}
+
+#nextBtn {
+  margin-top: 15px;
+  background: #28a745;
+  display: none;
+}
+
+#timer {
+  font-weight: bold;
+}
+
+</style>
+</head>
+<body>
+
+<div class="container">
+  <h2>🧠 Quiz Master</h2>
+  <p id="timer">Time: 10</p>
+  <div id="question">Question here</div>
+  <div id="answers"></div>
+  <button id="nextBtn" onclick="nextQuestion()">Next</button>
+</div>
+
+<script>
+const quiz = [
+  {
+    question: "What is the capital of Uzbekistan?",
+    answers: ["Tashkent", "Samarkand", "Bukhara", "Khiva"],
+    correct: 0
+  },
+  {
+    question: "2 + 2 = ?",
+    answers: ["3", "4", "5", "6"],
+    correct: 1
+  },
+  {
+    question: "HTML stands for?",
+    answers: [
+      "Hyper Text Markup Language",
+      "High Tech Modern Language",
+      "Home Tool Markup Language",
+      "Hyperlinks Text Management"
+    ],
+    correct: 0
+  }
+];
+
+let current = 0;
+let score = 0;
+let time = 10;
+let timer;
+
+function startTimer() {
+  time = 10;
+  document.getElementById("timer").innerText = "Time: " + time;
+
+  timer = setInterval(() => {
+    time--;
+    document.getElementById("timer").innerText = "Time: " + time;
+
+    if (time === 0) {
+      clearInterval(timer);
+      nextQuestion();
+    }
+  }, 1000);
+}
+
+function loadQuestion() {
+  clearInterval(timer);
+  startTimer();
+
+  const q = quiz[current];
+  document.getElementById("question").innerText = q.question;
+
+  const answersDiv = document.getElementById("answers");
+  answersDiv.innerHTML = "";
+
+  q.answers.forEach((answer, index) => {
+    const btn = document.createElement("button");
+    btn.innerText = answer;
+    btn.classList.add("btn");
+    btn.onclick = () => selectAnswer(index);
+    answersDiv.appendChild(btn);
+  });
+
+  document.getElementById("nextBtn").style.display = "none";
+}
+
+function selectAnswer(index) {
+  clearInterval(timer);
+
+  if (index === quiz[current].correct) {
+    score++;
+  }
+
+  document.getElementById("nextBtn").style.display = "block";
+}
+
+function nextQuestion() {
+  current++;
+  if (current < quiz.length) {
+    loadQuestion();
+  } else {
+    showResult();
+  }
+}
+
+function showResult() {
+  document.querySelector(".container").innerHTML = `
+    <h2>🎉 Finished!</h2>
+    <p>Your score: ${score} / ${quiz.length}</p>
+    <button onclick="location.reload()">Restart</button>
+  `;
+}
+
+loadQuestion();
+</script>
+
+</body>
+</html>
